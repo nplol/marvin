@@ -15,5 +15,6 @@ module.exports = (robot) ->
     robot.http("http://www.reddit.com/r/oneliners/top/?sort=top&t=month")
       .get() (err, res, body) ->
         $ = cheerio.load(body)
+
         oneliners = _.map($('a.title'), (link) -> link.children[0].data)
         msg.send _.sample(oneliners)
