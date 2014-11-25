@@ -1,1 +1,1 @@
-web: bin/hubot -a slack -n Marvin
+web: bin/hubot -a slack -n marvin
