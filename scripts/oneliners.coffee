@@ -12,6 +12,6 @@ _       = require 'lodash'
 
 module.exports = (robot) ->
   robot.respond /(crack me up)/i, (msg) ->
-    robot.http("http://www.reddit.com/r/oneliners.json?limit=100&sort=top&t=year")
+    robot.http("http://www.reddit.com/r/oneliners/top.json?limit=100&&t=all")
       .get() (err, res, body) ->
         msg.send _.sample(_.map(JSON.parse(body).data.children, (redditPost) -> redditPost.data.title))
