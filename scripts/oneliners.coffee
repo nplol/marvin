@@ -1,8 +1,8 @@
 # Description:
 #   Cracking sick oneliners.
-#
-# Dependencies:
-#   Cheerio 0.18.x
+# 
+# Dependencies
+#   Lodash
 #
 # Commands:
 #   hubot crack me up - Scrapes reddit.com/r/oneliners monthly top list and returns a random oneliner.
@@ -12,9 +12,6 @@ _       = require 'lodash'
 
 module.exports = (robot) ->
   robot.respond /(crack me up)/i, (msg) ->
-    robot.http("http://www.reddit.com/r/oneliners/top/?sort=top&t=month")
+    robot.http("http://www.reddit.com/r/oneliners.json?limit=100&sort=top&t=year")
       .get() (err, res, body) ->
-        $ = cheerio.load(body)
-
-        oneliners = _.map($('a.title'), (link) -> link.children[0].data)
-        msg.send _.sample(oneliners)
+        msg.send _.sample(_.map(JSON.parse(body).data.children, (redditPost) -> redditPost.data.title))
