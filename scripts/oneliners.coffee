@@ -5,9 +5,9 @@
 #   Lodash
 #
 # Commands:
-#   hubot crack me up - Scrapes reddit.com/r/oneliners monthly top list and returns a random oneliner.
+#   hubot crack me up - Fetches the all-time best oneliners from reddit and returns a 
+#   random one from the result set.
 #
-cheerio = require 'cheerio'
 _       = require 'lodash'
 
 module.exports = (robot) ->
