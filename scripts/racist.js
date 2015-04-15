@@ -11,8 +11,8 @@
 
 module.exports = function (robot) {
 
-  robot.respond(/noracist/, function (msg) {
-    msg.send "http://i.imgur.com/HEOJs.gif" 
-  }
+  robot.respond(/(noracist)/i, function (msg) {
+    msg.send("http://i.imgur.com/HEOJs.gif");
+  });
 
 }
