@@ -1,5 +1,5 @@
 // Description:
-//  It's important that we do not descend into madness and racism
+// For when conversations just won't start.
 //
 // Dependencies:
 //  None
@@ -7,7 +7,7 @@
 // Configuration:
 //  None
 // Commands:
-//  marvin noracist - Receive appropriate gif
+//  marvin tumbleweeds - Receive appropriate gif
 
 module.exports = function (robot) {
 
