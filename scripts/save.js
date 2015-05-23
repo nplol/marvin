@@ -1,15 +1,18 @@
 // Description:
-//  This will help us save and do the saving throug marvin
+//  This will help us save and do the saving through marvin
 //
 // Dependencies:
-//  request
+//  request, lodash
 //
 // Configuration:
 //  None
 // Commands:
-//  hubot save - Gets help with saving
+//  marvin save - Try it out and see what marvin says
+
 var request = require('request');
+var _ = require('lodash')
 var slackToken = "cLSehYweAMPA1ZhgWMww9Xap";
+var allowedTimeSeperatorChars = [".", ":", "-"];
 
 var deniedMinutesResponses = [
 	'You cant trick me, pleae correct your time',
@@ -51,33 +54,12 @@ module.exports = function (robot) {
     );
   });
 
-  robot.respond(/check\s?(.+)?\s?(.+)?$/i, function (msg) {
-  	msg.send(msg.message.user.name);
-  	if(msg.match[1]) {
-  		if(msg.match[2]) {
-  			msg.send("checking "+msg.match[2]);
-  			for(var key in msg[msg.match[1]][msg.match[2]]) {
-		  		msg.send(key);
-		  	}	
-		  	return
-  		}
-  		msg.send("Checking "+msg.match[1]);
-		for(var key in msg[msg.match[1]]) {
-	  		msg.send(key);
-	  	}  			
-	  	return;
-  	}
-  	for(var key in msg) {
-  		msg.send(key);
-  	}
-  });
-
   robot.respond(/save (\d+) lines?$/i, function (msg) {
-  	saveRequest(msg, "$save -l", "lines");
+  	saveRequest(msg, "LINE");
   });
 
   robot.respond(/save (\d+) minutes?$/i, function (msg) {
-  	saveRequest(msg, "$save -m", "minutes");
+  	saveRequest(msg, "MINUTES");
   });
 
   robot.respond(/save (([0-1]?[0-9]|[2][0-3]):([0-5][0-9])) (([0-1]?[0-9]|[2][0-3]):([0-5][0-9]))/i, function (msg) {
@@ -89,39 +71,45 @@ module.exports = function (robot) {
   		return;
   	}
 
-  	saveRequest(msg, "$save -t");
+  	saveRequest(msg, "TIME");
   })
-
 };
 
-var getValues = function (msg, isTime) {
-	return isTime ? msg.match[1] +" "+ msg.match[4] : msg.match[1] ;
+var parseTime = function(time) {
+	var now = new Date(Date.now());
+	_.forEach(allowedTimeSeperatorChars, function(char) {
+		if(_.contains(time, char)) {
+			time = time.split(char);
+		}
+	});
+	now.setHours(time[0]);
+	now.setMinutes(time[1]);
+	return Date.parse(now +" GMT+0100");
 }
 
-var isItTimeCommand = function(command) {
-	return command.indexOf("-t") > -1
-}
-
-var saveRequest = function (msg, command, text) {
-	var isTime = isItTimeCommand(command);
+var saveRequest = function (msg, type) {
+	var isTime = type === "TIME";
 	if(isTime) {
-		msg.send("Saving timesegment: "+msg.match[1]+" - "+msg.match[4]+", "+msg.random(waitMessages));
+		msg.send("Saving timesegment: "+msg.match[1]+" to "+msg.match[4]+", "+msg.random(waitMessages));
 	} else {
-		msg.send("Saving "+msg.match[1]+" "+text+ ", "+msg.random(waitMessages));	
+		msg.send("Saving "+msg.match[1]+" "+(type == "LINE" ? "lines" : "minutes")+ ", "+msg.random(waitMessages));	
 	}
-	
-	var token = slackToken;
-  	var text = command +" "+ getValues(msg, isTime);
-  	var channel_name = msg.message.room; 
-  	var user_id = msg.message.user.id;
-  	var user_name = msg.message.user.name;
-  	var body = {token:token, text:text, channel_name:channel_name, user_id:user_id, user_name:user_name};
+
+  	var body = {
+  		token: slackToken,  
+  		channel_name: msg.message.room, 
+  		user_id: msg.message.user.id, 
+  		user_name: msg.message.user.name,
+  		type: type,
+  		start: isTime ? parseTime(msg.match[1]) : Date.now(),
+		end: isTime ? parseTime(msg.match[4]) : msg.match[1]  		
+  	};
 
 	request({
 			headers: {
-			  'Content-Type': 'application/json'
+			  'Content-Type': 'application/json',
 			},
-			uri: "http://nplol-hook.herokuapp.com/hook/slack",
+			uri: "http://nplol-hook.herokuapp.com/hook/slack/save",
 			json: true,
 			body: body,
 			method: 'POST'
@@ -129,6 +117,10 @@ var saveRequest = function (msg, command, text) {
 		function (err, res, body) {
 			if(err) {
 				msg.send(msg.random(errorResponses) +" "+err);
+			}
+			else if(res.statusCode != 200){
+				msg.send(res.body.message);
+				msg.send(res.statusCode +" - "+ msg.random(errorResponses));
 			}
 			else {
 				msg.send(msg.random(successResponses));
