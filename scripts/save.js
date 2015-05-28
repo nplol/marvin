@@ -17,7 +17,7 @@ var allowedTimeSeperatorChars = [".", ":", "-"];
 var deniedMinutesResponses = [
 	'You cant trick me, please correct your time',
 	'You think im stupid? Adjust your input',
-	'Look at your time, itIs just wrong'
+	'Look at your time, it´s just wrong'
 ];
 
 var errorResponses = [
@@ -140,8 +140,8 @@ var saveRequest = function (msg, type) {
 				msg.send(msg.random(errorResponses) +" "+err);
 			}
 			else if(res.statusCode != 200){
-				msg.send(res.body.message);
 				msg.send(res.statusCode +" - "+ msg.random(errorResponses));
+				msg.send(res.body);
 			}
 			else {
 				msg.send(msg.random(successResponses));
