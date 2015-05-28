@@ -11,7 +11,7 @@
 
 var request = require('request');
 var _ = require('lodash')
-var slackToken = "cLSehYweAMPA1ZhgWMww9Xap";
+var slackToken = process.env.SLACK_HOOKER_TOKEN;
 var allowedTimeSeperatorChars = [".", ":", "-"];
 
 var deniedMinutesResponses = [
