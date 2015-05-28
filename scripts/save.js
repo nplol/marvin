@@ -15,9 +15,9 @@ var slackToken = "cLSehYweAMPA1ZhgWMww9Xap";
 var allowedTimeSeperatorChars = [".", ":", "-"];
 
 var deniedMinutesResponses = [
-	'You cant trick me, pleae correct your time',
+	'You cant trick me, please correct your time',
 	'You think im stupid? Adjust your input',
-	'Look at your time, its just wrong'
+	'Look at your time, itIs just wrong'
 ];
 
 var errorResponses = [
@@ -25,15 +25,15 @@ var errorResponses = [
 	'I dont think that packet came all the way to the end, sawwy',
 	'I failed master, let me make it up to you',
 	'Something went wrong and its all my fault',
-	'Pooop, i failed delivering that message'
+	'Pooop, I failed delivering that message'
 ]
 
 var successResponses = [
 	'Yeaaahhjj, that task was saved!',
 	'Go figure, it worked! Ask Ken to se the result',
 	'Im not worthless afterall, it got saved, hurray!',
-	'Holy stinkballs, i made it! Its saved in the big internet',
-	'Whos the boss, i got it save for you master!'
+	'Holy stinkballs, I made it! It´s saved in the big internet',
+	'Who´s the boss, I got it saved for you master!'
 ]
 
 var waitMessages = [
