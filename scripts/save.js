@@ -127,28 +127,28 @@ var saveRequest = function (msg, type) {
   	};
 
 	request({
-			headers: {
-			  'Content-Type': 'application/json',
-			},
-			uri: "http://nplol-hook.herokuapp.com/hook/slack/save",
-			json: true,
-			body: body,
-			method: 'POST'
-		}, 
-		function (err, res, body) {
-			if(err) {
-				msg.send(msg.random(errorResponses) +" "+err);
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		uri: "http://nplol-hook.herokuapp.com/hook/slack/save",
+		json: true,
+		body: body,
+		method: 'POST'
+	}, 
+	function (err, res, body) {
+		if(err) {
+			msg.send(msg.random(errorResponses) +" "+err);
+		}
+		else if(res.statusCode != 200){
+			msg.send(res.statusCode +" - "+ msg.random(errorResponses));
+			if(res.body.message) {
+				msg.send(res.body.message);	
+			}else {
+				msg.send(res.body);
 			}
-			else if(res.statusCode != 200){
-				msg.send(res.statusCode +" - "+ msg.random(errorResponses));
-				if(res.body.message) {
-					msg.send(res.body.message);	
-				}else {
-					msg.send(res.body);
-				}
-			}
-			else {
-				msg.send(msg.random(successResponses));
-			}
+		}
+		else {
+			msg.send(msg.random(successResponses));
+		}
 	});
 }
