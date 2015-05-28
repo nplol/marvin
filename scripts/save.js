@@ -141,7 +141,11 @@ var saveRequest = function (msg, type) {
 			}
 			else if(res.statusCode != 200){
 				msg.send(res.statusCode +" - "+ msg.random(errorResponses));
-				msg.send(res.body);
+				if(res.body.message) {
+					msg.send(res.body.message);	
+				}else {
+					msg.send(res.body);
+				}
 			}
 			else {
 				msg.send(msg.random(successResponses));
