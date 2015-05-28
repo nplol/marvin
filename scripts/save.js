@@ -62,11 +62,24 @@ module.exports = function (robot) {
   	saveRequest(msg, "MINUTES");
   });
 
+  /*
+	RegEx that listens for "save nr:nr nr:nr"
+	save is obligatory, both spaces are obligatory, aswell as the : sign.
+	Its catches 6 RegEx groups
+	The groups can be accesed through the msg.match array. This is Hubot api.
+	array[0] is full match, and then follows each RegEx group.
+	Group 1: matches the first timeset
+	Group 2: matches number 00-23. Optional 0-1, with 0-9, eller 2 with 0-3.
+	Group 3: matches number 0-5 with 0-9
+	Group 4: matches the second timeset
+	Group 5: same as group 2
+	Group 6: same as group 3
+  */
   robot.respond(/save (([0-1]?[0-9]|[2][0-3]):([0-5][0-9])) (([0-1]?[0-9]|[2][0-3]):([0-5][0-9]))/i, function (msg) {
-  	if(parseInt(msg.match[1].split(":")[0]) > parseInt(msg.match[4].split(":")[0])) {
+  	if(isHoursAfterEachother(msg)) {
   		msg.send( msg.random(deniedMinutesResponses));
   		return;
-  	} else if(parseInt(msg.match[1].split(":")[1]) > parseInt(msg.match[4].split(":")[1])) {
+  	} else if(isMinutesAfterEachother(msg)) {
   		msg.send( msg.random(deniedMinutesResponses));
   		return;
   	}
@@ -74,6 +87,14 @@ module.exports = function (robot) {
   	saveRequest(msg, "TIME");
   })
 };
+
+var isHoursAfterEachother = function(msg) {
+	return (parseInt(msg.match[1].split(":")[0]) > parseInt(msg.match[4].split(":")[0]))
+}
+
+var isMinutesAfterEachother = function(msg) {
+	return (parseInt(msg.match[1].split(":")[1]) > parseInt(msg.match[4].split(":")[1]))
+}
 
 var parseTime = function(time) {
 	var now = new Date(Date.now());
